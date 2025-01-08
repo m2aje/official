@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Roll!</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #myVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1; /* Place the video behind the content */
+            object-fit: cover;
+        }
+
+.logo-link {
+    position: absolute;
+    top: 8px;
+    left: 30px;
+    z-index: 10; /* Ensure it stays above other elements */
+}
+
+.logo-link img {
+    width: 150px;
+    height: 100px;
+    transition: transform 0.3s ease; /* Optional: add hover effect */
+}
+
+.logo-link img:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+        .die-container {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 1s ease-in-out;
+        }
+
+        .die-container div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            border: 5px solid #e4aa0c; /* Adds border to the faces */
+            box-shadow: 0 0 10px rgba(255, 229, 158, 0.8), inset 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth to each face */
+        }
+
+        .front { transform: rotateY(0deg) translateZ(50px); background-image: url('untitled/1.png'); }
+        .back { transform: rotateY(180deg) translateZ(50px); background-image: url('untitled/2.png'); }
+        .right { transform: rotateY(90deg) translateZ(50px); background-image: url('untitled/3.png'); }
+        .left { transform: rotateY(-90deg) translateZ(50px); background-image: url('untitled/4.png'); }
+        .top { transform: rotateX(90deg) translateZ(50px); background-image: url('untitled/5.png'); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); background-image: url('untitled/6.png'); }
+
+        .die-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Adds a glowing 3D effect */
+        }
+
+        button {
+            
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1d0320;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        button:hover {
+            background-color: #3e0f47;
+        }
+        .link-display {
+    margin-top: 20px;
+    font-size: 18px;
+    font-family: 'MedievalSharp', cursive;
+    color: #fff;
+    text-shadow: 0 0 5px rgb(225, 0, 255), 0 0 10px rgb(225, 0, 255), 0 0 15px rgb(255, 0, 255), 0 0 20px #e100ff, 0 0 25px #e100ff;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease, text-shadow 0.3s ease-in-out;
+}
+
+.link-display.visible {
+    opacity: 1;
+    transform: translateY(0);
+    text-shadow: 0 0 10px rgb(255, 0, 255), 0 0 20px rgb(255, 0, 255), 0 0 30px rgb(212, 0, 255), 0 0 40px #e100ff, 0 0 50px #e100ff;
+}
+
+
+        .link-display a {
+    color: #fff8b6;
+    text-decoration: none;
+    text-shadow: 0 0 5px rgb(255, 187, 0), 0 0 10px rgb(255, 187, 0), 0 0 15px rgb(255, 187, 0), 0 0 20px #ffd000, 0 0 25px #ffd000;
+    transition: text-shadow 0.3s ease-in-out;
+}
+
+.link-display a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 10px  rgb(255, 187, 0), 0 0 10px rgb(255, 187, 0), 0 0 15px rgb(255, 187, 0), 0 0 20px #ffd000, 0 0 25px #ffd000;
+}
+    </style>
+</head>
+<body>
+
+    <!-- Video Background -->
+    <video autoplay muted loop id="myVideo">
+        <source src="purpul.mp4" type="video/mp4">
+    </video>
+
+    <!-- Logo Link -->
+    <a href="https://mjardenas.my.canva.site/m2aje" class="logo-link" target="_blank">
+        <img src="mage2.png" alt="Logo">
+    </a>
+
+    <div class="die-container" id="die">
+        <div class="front"></div>
+        <div class="back"></div>
+        <div class="right"></div>
+        <div class="left"></div>
+        <div class="top"></div>
+        <div class="bottom"></div>
+    </div>
+    <button onclick="rollDice()">Roll Dice</button>
+    <div class="link-display" id="linkDisplay">Roll the dice to see where it lands!</div>
+
+    <script>
+        const faceLinks = {
+    front: { face: 'Front', url: 'https://mjardenas.my.canva.site/an-anamnesis-of-what-could-ve-been', displayName: 'Read me!' },
+    back: { face: 'Back', url: 'https://mjardenas.my.canva.site/under-the-spell-of-us', displayName: 'Read me!' },
+    right: { face: 'Right', url: 'https://mjardenas.my.canva.site/a-small-hope-catherage', displayName: 'Read me!' },
+    left: { face: 'Left', url: 'https://mjardenas.my.canva.site/a-small-hope-in-the-darkness', displayName: 'Read me!' },
+    top: { face: 'Top', url: 'https://mjardenas.my.canva.site/the-mystery-of-king-aldren', displayName: 'Read me!' },
+    bottom: { face: 'Bottom', url: 'https://mjardenas.my.canva.site/the-curious-case-of-isa', displayName: 'Read me!' },
+};
+
+function rollDice() {
+    const die = document.getElementById('die');
+    const linkDisplay = document.getElementById('linkDisplay');
+
+    // Generate random rotations for the dice
+    const xRotation = Math.floor(Math.random() * 4) * 90;
+    const yRotation = Math.floor(Math.random() * 4) * 90;
+
+    die.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+
+    // Determine the top face based on rotations
+    const topFace = getTopFace(xRotation, yRotation);
+
+    // Reset and update the link display
+    linkDisplay.classList.remove('visible');
+    setTimeout(() => {
+        linkDisplay.innerHTML = `
+             
+ <a href="${faceLinks[topFace].url}" target="_blank">${faceLinks[topFace].displayName}</a>`;
+        linkDisplay.classList.add('visible');
+    }, 500);
+}
+
+        function getTopFace(xRotation, yRotation) {
+            // Map rotations to top face
+            if (xRotation === 90) return 'top';
+            if (xRotation === 270) return 'bottom';
+            if (yRotation === 0) return 'front';
+            if (yRotation === 90) return 'right';
+            if (yRotation === 180) return 'back';
+            if (yRotation === 270) return 'left';
+        }
+    </script>
+</body>
+</html>
